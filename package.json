@@ -1,6 +1,6 @@
 {
   "name": "taglog-nextjs-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "taglog.io nodejs connection client",
   "author": "dusanpetkovicdsaga",
   "license": "MIT",
