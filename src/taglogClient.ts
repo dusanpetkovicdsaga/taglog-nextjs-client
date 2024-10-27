@@ -134,39 +134,26 @@ function logRequestBeacon({
   data = {},
   type,
   accessKey,
-  tags,
-  channel
+  channel,
+  tags
 }: ILogRequest & { tags?: string[] }) {
-  const postData = JSON.stringify({ title, data, type, tags })
-
-  const isLocalhost = taglogConfig[accessKey].SERVER_URL.includes('localhost')
-  const request = isLocalhost ? httpRequest : httpsRequest
-
-  const serverUrl = new URL(taglogConfig[accessKey].SERVER_URL)
-  const options = {
-    hostname: serverUrl.hostname,
-    port: serverUrl.port || 80,
-    path: `/api/ingest/${
-      channel ? channel : taglogConfig[accessKey].DEFAULT_CHANNEL
-    }`,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(postData),
-      messageType: logMessageType,
-      accessToken: accessKey,
-      Accept: 'application/json'
-    }
+  try {
+    fetch(
+      `${taglogConfig[accessKey].SERVER_URL}/ingest/${
+        channel ? channel : taglogConfig[accessKey].DEFAULT_CHANNEL
+      }`,
+      {
+        method: 'POST',
+        headers: {
+          messageType: logMessageType,
+          accessToken: accessKey,
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title, data, type, tags })
+      }
+    )
+  } catch (e) {
+    if (!shouldCaptureConsole) console.log(e)
   }
-
-  const req = request(options)
-
-  req.on('error', (e) => {
-    if (!shouldCaptureConsole)
-      console.error(`problem with request: ${e.message}`)
-  })
-
-  // Write data to request body and end the request
-  req.write(postData)
-  req.end()
 }
