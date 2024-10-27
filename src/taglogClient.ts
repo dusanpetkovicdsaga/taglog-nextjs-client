@@ -1,5 +1,3 @@
-import { request as httpsRequest } from 'https'
-import { request as httpRequest } from 'http'
 import { initConsolLogger } from './consoleLogger'
 import {
   ILogRequest,
@@ -16,6 +14,16 @@ const taglogConfig: ITaglogConfig = {}
 const TAGLOG_SERVER_URL = 'https://api.taglog.io/api'
 
 let shouldCaptureConsole: boolean = false
+
+type SessionType = {
+  __HEADERS__: {
+    [key: string]: string
+  }
+}
+
+export const session: SessionType = {
+  __HEADERS__: {}
+}
 
 export function taglogInit({
   accessKey,
@@ -148,7 +156,8 @@ function logRequestBeacon({
           messageType: logMessageType,
           accessToken: accessKey,
           Accept: 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...session.__HEADERS__
         },
         body: JSON.stringify({ title, data, type, tags })
       }
