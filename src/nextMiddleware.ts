@@ -7,7 +7,8 @@ export function middleware(req: NextRequest) {
     'User-Agent': req.headers.get('user-agent') || '',
     Origin: req.headers.get('origin') || '',
     Host: req.headers.get('host') || '',
-    Referer: req.headers.get('referer') || ''
+    Referer: req.headers.get('referer') || '',
+    _Taglog: '1'
   }
 
   // Store headers in a global variable or context
